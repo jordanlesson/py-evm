@@ -21,9 +21,6 @@ class LynxVM(FrontierVM):
     # Classes
     block_class: Type[BaseBlock] = LynxBlock
     _state_class: Type[BaseState] = LynxState
-    print(f'HEADER: {HeaderSedes}')
-    HeaderSedes = LynxBackwardsHeader
-    print(f'HEADER: {HeaderSedes}')
 
     # Methods
     create_header_from_parent = create_header_from_parent
