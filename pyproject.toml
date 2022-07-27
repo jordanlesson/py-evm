@@ -1,6 +1,6 @@
 [tool.towncrier]
 # Read https://github.com/ethereum/py-evm/newsfragments/README.md for instructions
-package = "eth"
+package = "lynx"
 filename = "docs/release_notes.rst"
 directory = "newsfragments"
 underlines = ["-", "~", "^"]
