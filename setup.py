@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 
 deps = {
-    'eth': [
+    'eth-lynx': [
         "cached-property>=1.5.1,<2",
         "eth-bloom>=1.0.3,<2.0.0",
         "eth-keys>=0.4.0,<0.5.0",
@@ -21,7 +21,7 @@ deps = {
     # explicitly need to function and hence should not depend on.
     # Installing these libraries may make the evm perform better than
     # using the default fallbacks though.
-    'eth-extra': [
+    'eth-lynx-extra': [
         "blake2b-py>=0.1.4,<0.2",
         "coincurve>=13.0.0,<14.0.0",
         "eth-hash[pysha3];implementation_name=='cpython'",
@@ -77,14 +77,14 @@ deps = {
 
 deps['dev'] = (
     deps['dev'] +
-    deps['eth'] +
+    deps['eth-lynx'] +
     deps['test'] +
     deps['doc'] +
     deps['lint']
 )
 
 
-install_requires = deps['eth']
+install_requires = deps['eth-lynx']
 
 with open('README.md') as readme_file:
     long_description = readme_file.read()
@@ -92,13 +92,13 @@ with open('README.md') as readme_file:
 setup(
     name='py-evm',
     # *IMPORTANT*: Don't manually change the version here. Use the 'bumpversion' utility.
-    version='0.5.0-alpha.3',
+    version='0.0.1',
     description='Python implementation of the Ethereum Virtual Machine',
     long_description=long_description,
     long_description_content_type='text/markdown',
     author='Ethereum Foundation',
     author_email='piper@pipermerriam.com',
-    url='https://github.com/ethereum/py-evm',
+    url='https://github.com/jordanlesson/py-evm',
     include_package_data=True,
     py_modules=['eth'],
     install_requires=install_requires,
