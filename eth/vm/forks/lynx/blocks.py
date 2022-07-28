@@ -67,7 +67,7 @@ from eth.constants import (
 
 from eth.vm.forks.london.blocks import LondonBackwardsHeader
 
-from lynx.forks.lynx.transactions import LynxTransactionBuilder
+from .transactions import LynxTransactionBuilder
 
 UNMINED_LYNX_HEADER_FIELDS = [
     ('parent_hash', hash32),

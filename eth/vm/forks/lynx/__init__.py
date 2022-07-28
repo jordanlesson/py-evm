@@ -6,7 +6,7 @@ from typing import (
 from eth.rlp.blocks import BaseBlock
 from eth.vm.state import BaseState
 
-from lynx.forks.lynx.headers import (create_header_from_parent, configure_header)
+from .headers import (create_header_from_parent, configure_header)
 
 from .blocks import LynxBackwardsHeader, LynxBlock
 from .state import LynxState
