@@ -58,17 +58,17 @@ from .blocks import LynxBlock, LynxBlockHeader
 def create_header_from_parent(parent_header: Optional[BlockHeaderAPI],
                               **header_params: Any) -> BlockHeaderAPI:
 
-    if 'gas_limit' not in header_params:
-        if False and (parent_header is not None and not hasattr(parent_header, 'base_fee_per_gas')):
-            # If the previous block was not a London block,
-            #   double the gas limit, so the new target is the old gas limit
-            header_params['gas_limit'] = parent_header.gas_limit * ELASTICITY_MULTIPLIER
-        else:
-            # frontier rules
-            header_params['gas_limit'] = compute_gas_limit(
-                parent_header,
-                genesis_gas_limit=GENESIS_GAS_LIMIT,
-            )
+    # if 'gas_limit' not in header_params:
+    #     if False and (parent_header is not None and not hasattr(parent_header, 'base_fee_per_gas')):
+    #         # If the previous block was not a London block,
+    #         #   double the gas limit, so the new target is the old gas limit
+    #         header_params['gas_limit'] = parent_header.gas_limit * ELASTICITY_MULTIPLIER
+    #     else:
+    #         # frontier rules
+    #         header_params['gas_limit'] = compute_gas_limit(
+    #             parent_header,
+    #             genesis_gas_limit=GENESIS_GAS_LIMIT,
+    #         )
 
     # byzantium
     if 'timestamp' not in header_params:
@@ -76,9 +76,9 @@ def create_header_from_parent(parent_header: Optional[BlockHeaderAPI],
 
     # The general fill function doesn't recognize this custom field, so remove it
     configured_fee_per_gas = header_params.pop('base_fee_per_gas', None)
+    header_params.pop('gas_limit', None)
 
     all_fields = fill_header_params_from_parent(parent_header, **header_params)
-    all_fields['difficulty'] = 1
     # all_fields['epoch'] = 1
     # all_fields['base_fee_per_gas'] = 0
     # calculated_fee_per_gas = calculate_expected_base_fee_per_gas(parent_header)
@@ -100,9 +100,8 @@ def create_header_from_parent(parent_header: Optional[BlockHeaderAPI],
 
 def fill_header_params_from_parent(
         parent: BlockHeaderAPI,
-        gas_limit: int,
+        # gas_limit: int,
         timestamp: int,
-        difficulty: int = 1,
         coinbase: Address = ZERO_ADDRESS,
         nonce: bytes = None,
         extra_data: bytes = None,
@@ -149,7 +148,7 @@ def fill_header_params_from_parent(
         'parent_hash': parent_hash,
         'coinbase': coinbase,
         'state_root': state_root,
-        'gas_limit': gas_limit,
+        # 'gas_limit': gas_limit,
         'block_number': block_number,
         'timestamp': timestamp,
     }

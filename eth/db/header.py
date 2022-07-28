@@ -206,7 +206,8 @@ class HeaderDB(HeaderDatabaseAPI):
             header: BlockHeaderAPI,
             score: int
     ) -> int:
-        new_score = score + header.difficulty
+        # new_score = score + header.difficulty
+        new_score = 0
 
         db.set(
             SchemaV1.make_block_hash_to_score_lookup_key(header.hash),

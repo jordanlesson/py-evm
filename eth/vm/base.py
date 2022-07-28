@@ -180,8 +180,8 @@ class VM(Configurable, VirtualMachineAPI):
                 coinbase=fee_recipient,
                 timestamp=header.timestamp,
                 block_number=header.block_number,
-                difficulty=header.difficulty,
-                gas_limit=header.gas_limit,
+                # difficulty=header.difficulty,
+                # gas_limit=header.gas_limit,
                 prev_hashes=prev_hashes,
                 chain_id=chain_context.chain_id,
             )
@@ -190,11 +190,11 @@ class VM(Configurable, VirtualMachineAPI):
                 coinbase=fee_recipient,
                 timestamp=header.timestamp,
                 block_number=header.block_number,
-                difficulty=header.difficulty,
-                gas_limit=header.gas_limit,
+                # difficulty=header.difficulty,
+                # gas_limit=header.gas_limit,
                 prev_hashes=prev_hashes,
                 chain_id=chain_context.chain_id,
-                base_fee_per_gas=base_fee,
+                # base_fee_per_gas=base_fee,
             )
 
     def execute_bytecode(self,

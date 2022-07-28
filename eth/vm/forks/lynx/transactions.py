@@ -5,24 +5,18 @@ from eth_keys.datatypes import PrivateKey
 from eth._utils.transactions import (
     create_transaction_signature,
 )
-from eth.vm.forks.arrow_glacier.transactions import (
-    ArrowGlacierLegacyTransaction,
-    ArrowGlacierTransactionBuilder,
-    ArrowGlacierUnsignedLegacyTransaction,
-)
-
-from eth.vm.forks.berlin.transactions import (
-    BerlinLegacyTransaction,
-    BerlinTransactionBuilder,
-    BerlinUnsignedLegacyTransaction,
+from eth.vm.forks.gray_glacier.transactions import (
+    GrayGlacierLegacyTransaction,
+    GrayGlacierTransactionBuilder,
+    GrayGlacierUnsignedLegacyTransaction,
 )
 
 
-class LynxLegacyTransaction(BerlinLegacyTransaction, ABC):
+class LynxLegacyTransaction(GrayGlacierLegacyTransaction, ABC):
     pass
 
 
-class LynxUnsignedLegacyTransaction(BerlinUnsignedLegacyTransaction):
+class LynxUnsignedLegacyTransaction(GrayGlacierUnsignedLegacyTransaction):
     def as_signed_transaction(
         self,
         private_key: PrivateKey,
@@ -42,6 +36,6 @@ class LynxUnsignedLegacyTransaction(BerlinUnsignedLegacyTransaction):
         )
 
 
-class LynxTransactionBuilder(BerlinTransactionBuilder):
+class LynxTransactionBuilder(GrayGlacierTransactionBuilder):
     legacy_signed = LynxLegacyTransaction
     legacy_unsigned = LynxUnsignedLegacyTransaction

@@ -19,11 +19,11 @@ def validate_london_normalized_transaction(
     Raise `eth.exceptions.ValidationError` if the sender cannot
     afford to send this transaction.
     """
-    base_fee_per_gas = state.execution_context.base_fee_per_gas
-    if transaction.max_fee_per_gas < base_fee_per_gas:
-        raise ValidationError(
-            f"Sender's max fee per gas ({transaction.max_fee_per_gas}) is "
-            f"lower than block's base fee per gas ({base_fee_per_gas})"
-        )
+    # base_fee_per_gas = state.execution_context.base_fee_per_gas
+    # if transaction.max_fee_per_gas < base_fee_per_gas:
+    #     raise ValidationError(
+    #         f"Sender's max fee per gas ({transaction.max_fee_per_gas}) is "
+    #         f"lower than block's base fee per gas ({base_fee_per_gas})"
+    #     )
 
     validate_homestead_transaction(state, transaction)

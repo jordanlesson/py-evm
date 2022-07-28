@@ -42,11 +42,8 @@ from eth.rlp.sedes import (
 from eth.rlp.headers import (
     BlockHeader,
 )
-from eth.vm.forks.arrow_glacier.blocks import (
-    ArrowGlacierBlock,
-)
-from eth.vm.forks.frontier.blocks import (
-    FrontierBlock,
+from eth.vm.forks.gray_glacier.blocks import (
+    GrayGlacierBlock
 )
 from eth.vm.forks.berlin.blocks import BerlinBlock
 from eth_typing import (
@@ -77,9 +74,8 @@ UNMINED_LYNX_HEADER_FIELDS = [
     ('transaction_root', trie_root),
     ('receipt_root', trie_root),
     ('bloom', uint256),
-    ('difficulty', big_endian_int),
     ('block_number', big_endian_int),
-    ('gas_limit', big_endian_int),
+    # ('gas_limit', big_endian_int),
     ('gas_used', big_endian_int),
     ('timestamp', big_endian_int),
     ('extra_data', binary),
@@ -99,9 +95,8 @@ class LynxBlockHeader(rlp.Serializable, BlockHeaderAPI):
 
     def __init__(self,
                  block_number: BlockNumber,
-                 gas_limit: int,
+                #  gas_limit: int,
                  timestamp: int = None,
-                 difficulty: int = 1,
                  coinbase: Address = ZERO_ADDRESS,
                  parent_hash: Hash32 = ZERO_HASH32,
                  uncles_hash: Hash32 = EMPTY_UNCLE_HASH,
@@ -132,9 +127,8 @@ class LynxBlockHeader(rlp.Serializable, BlockHeaderAPI):
             transaction_root=transaction_root,
             receipt_root=receipt_root,
             bloom=bloom,
-            difficulty=difficulty,
             block_number=block_number,
-            gas_limit=gas_limit,
+            # gas_limit=gas_limit,
             gas_used=gas_used,
             timestamp=timestamp,
             extra_data=extra_data,
@@ -194,17 +188,17 @@ class LynxBackwardsHeader(BlockHeaderSedesAPI):
     @classmethod
     def deserialize(cls, encoded: List[bytes]) -> LynxBlockHeader:
         num_fields = len(encoded)
-        if num_fields == 16:
-            return LynxBlockHeader.deserialize(encoded)
-        elif num_fields == 15:
-            return BlockHeader.deserialize(encoded)
-        else:
-            raise ValueError(
-                "Lynx & earlier can only handle headers of 15 or 16 fields. "
-                f"Got {num_fields} in {encoded!r}"
-            )
+        # if num_fields == 16:
+        return LynxBlockHeader.deserialize(encoded)
+        # elif num_fields == 15:
+        #     return BlockHeader.deserialize(encoded)
+        # else:
+        #     raise ValueError(
+        #         "Lynx & earlier can only handle headers of 15 or 16 fields. "
+        #         f"Got {num_fields} in {encoded!r}"
+        #     )
 
-class LynxBlock(FrontierBlock):
+class LynxBlock(GrayGlacierBlock):
     transaction_builder: Type[TransactionBuilderAPI] = LynxTransactionBuilder
     fields = [
         ('header', LynxBlockHeader),

@@ -18,30 +18,31 @@ class ExecutionContext(ExecutionContextAPI):
 
     _timestamp = None
     _number = None
-    _difficulty = None
-    _gas_limit = None
+    # _difficulty = None
+    # _gas_limit = None
     _prev_hashes = None
     _chain_id = None
-    _base_fee_per_gas = None
+    # _base_fee_per_gas = None
 
     def __init__(
             self,
             coinbase: Address,
             timestamp: int,
             block_number: BlockNumber,
-            difficulty: int,
-            gas_limit: int,
+            # difficulty: int,
+            # gas_limit: int,
             prev_hashes: Iterable[Hash32],
             chain_id: int,
-            base_fee_per_gas: Optional[int] = None) -> None:
+            # base_fee_per_gas: Optional[int] = None
+            ) -> None:
         self._coinbase = coinbase
         self._timestamp = timestamp
         self._block_number = block_number
-        self._difficulty = difficulty
-        self._gas_limit = gas_limit
+        # self._difficulty = difficulty
+        # self._gas_limit = gas_limit
         self._prev_hashes = CachedIterable(prev_hashes)
         self._chain_id = chain_id
-        self._base_fee_per_gas = base_fee_per_gas
+        # self._base_fee_per_gas = base_fee_per_gas
 
     @property
     def coinbase(self) -> Address:
@@ -57,11 +58,13 @@ class ExecutionContext(ExecutionContextAPI):
 
     @property
     def difficulty(self) -> int:
-        return self._difficulty
+        # return self._difficulty
+        return 0
 
     @property
     def gas_limit(self) -> int:
-        return self._gas_limit
+        # return self._gas_limit
+        return 0
 
     @property
     def prev_hashes(self) -> Iterable[Hash32]:
@@ -73,9 +76,10 @@ class ExecutionContext(ExecutionContextAPI):
 
     @property
     def base_fee_per_gas(self) -> int:
-        if self._base_fee_per_gas is None:
-            raise AttributeError(
-                f"This header at Block #{self.block_number} does not have a base gas fee"
-            )
-        else:
-            return self._base_fee_per_gas
+        # if self._base_fee_per_gas is None:
+        #     raise AttributeError(
+        #         f"This header at Block #{self.block_number} does not have a base gas fee"
+        #     )
+        # else:
+        #     return self._base_fee_per_gas
+        return 0

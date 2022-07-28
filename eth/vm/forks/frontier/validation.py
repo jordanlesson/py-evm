@@ -39,9 +39,10 @@ def validate_frontier_transaction(state: StateAPI,
 def validate_frontier_transaction_against_header(_vm: VirtualMachineAPI,
                                                  base_header: BlockHeaderAPI,
                                                  transaction: SignedTransactionAPI) -> None:
-    if base_header.gas_used + transaction.gas > base_header.gas_limit:
-        raise ValidationError(
-            f"Transaction exceeds gas limit: using {transaction.gas}, "
-            f"bringing total to {base_header.gas_used + transaction.gas}, "
-            f"but limit is {base_header.gas_limit}"
-        )
+    # if base_header.gas_used + transaction.gas > base_header.gas_limit:
+    #     raise ValidationError(
+    #         f"Transaction exceeds gas limit: using {transaction.gas}, "
+    #         f"bringing total to {base_header.gas_used + transaction.gas}, "
+    #         f"but limit is {base_header.gas_limit}"
+    #     )
+    ...
