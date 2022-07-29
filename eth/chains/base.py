@@ -534,9 +534,9 @@ class Chain(BaseChain):
         vm = self.get_vm(block.header)
         parent_header = self.get_block_header_by_hash(block.header.parent_hash)
         vm.validate_header(block.header, parent_header)
-        vm.validate_seal(block.header)
-        vm.validate_seal_extension(block.header, ())
-        self.validate_uncles(block)
+        # vm.validate_seal(block.header)
+        # vm.validate_seal_extension(block.header, ())
+        # self.validate_uncles(block)
 
     def validate_seal(self, header: BlockHeaderAPI) -> None:
         vm = self.get_vm(header)

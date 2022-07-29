@@ -601,7 +601,7 @@ class VM(Configurable, VirtualMachineAPI):
             validate_length_lte(
                 header.extra_data, cls.extra_data_max_bytes, title="BlockHeader.extra_data")
 
-            cls.validate_gas(header, parent_header)
+            # cls.validate_gas(header, parent_header)
 
             if header.block_number != parent_header.block_number + 1:
                 raise ValidationError(
@@ -674,7 +674,7 @@ class VM(Configurable, VirtualMachineAPI):
             # if Berlin -> London transition, double the parent limit for validation
             uncle_parent_gas_limit *= 2
 
-        validate_gas_limit(uncle.gas_limit, uncle_parent_gas_limit)
+        # validate_gas_limit(uncle.gas_limit, uncle_parent_gas_limit)
 
     #
     # State

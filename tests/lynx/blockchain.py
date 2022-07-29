@@ -52,7 +52,7 @@ def test_blockchain():
     block_result = blockchain.get_vm().finalize_block(blockchain.get_block())
     block = block_result.block
 
-    blockchain.persist_block(block, perform_validation=False)
+    blockchain.persist_block(block, perform_validation=True)
 
     print(blockchain.get_canonical_head().as_dict())
 
