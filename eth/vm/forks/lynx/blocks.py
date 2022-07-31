@@ -203,5 +203,5 @@ class LynxBlock(GrayGlacierBlock):
     fields = [
         ('header', LynxBlockHeader),
         ('transactions', CountableList(transaction_builder)),
-        ('uncles', CountableList(LynxBackwardsHeader)),
+        # ('uncles', CountableList(LynxBackwardsHeader)),
     ]
