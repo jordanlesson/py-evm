@@ -259,14 +259,14 @@ class ChainDB(HeaderDB, ChainDatabaseAPI):
             for index, transaction_hash in enumerate(tx_hashes):
                 cls._add_transaction_to_canonical_chain(db, transaction_hash, header, index)
 
-        if block.uncles:
-            uncles_hash = cls._persist_uncles(db, block.uncles)
-        else:
-            uncles_hash = EMPTY_UNCLE_HASH
-        if uncles_hash != block.header.uncles_hash:
-            raise ValidationError(
-                "Block's uncles_hash (%s) does not match actual uncles' hash (%s)",
-                block.header.uncles_hash, uncles_hash)
+        # if block.uncles:
+        #     uncles_hash = cls._persist_uncles(db, block.uncles)
+        # else:
+        #     uncles_hash = EMPTY_UNCLE_HASH
+        # if uncles_hash != block.header.uncles_hash:
+        #     raise ValidationError(
+        #         "Block's uncles_hash (%s) does not match actual uncles' hash (%s)",
+        #         block.header.uncles_hash, uncles_hash)
         new_canonical_hashes = tuple(header.hash for header in new_canonical_headers)
         old_canonical_hashes = tuple(
             header.hash for header in old_canonical_headers)

@@ -3,7 +3,8 @@ from typing import (
     Type, 
     cast,
     List,
-    Tuple
+    Tuple,
+    Sequence
 )
 from eth.abc import (
     BlockHeaderSedesAPI,
@@ -11,6 +12,16 @@ from eth.abc import (
     BlockHeaderAPI,
     MiningHeaderAPI,
     ChainDatabaseAPI,
+    SignedTransactionAPI,
+    ReceiptAPI,
+    ReceiptBuilderAPI,
+)
+from eth.rlp.blocks import (
+    BaseBlock,
+)
+from eth.vm.forks.london.transactions import LondonReceiptBuilder
+from eth_bloom import (
+    BloomFilter,
 )
 from eth_utils import (
     encode_hex,
@@ -68,7 +79,7 @@ from .transactions import LynxTransactionBuilder
 
 UNMINED_LYNX_HEADER_FIELDS = [
     ('parent_hash', hash32),
-    ('uncles_hash', hash32),
+    # ('uncles_hash', hash32),
     ('coinbase', address),
     ('state_root', trie_root),
     ('transaction_root', trie_root),
@@ -99,7 +110,7 @@ class LynxBlockHeader(rlp.Serializable, BlockHeaderAPI):
                  timestamp: int = None,
                  coinbase: Address = ZERO_ADDRESS,
                  parent_hash: Hash32 = ZERO_HASH32,
-                 uncles_hash: Hash32 = EMPTY_UNCLE_HASH,
+                #  uncles_hash: Hash32 = EMPTY_UNCLE_HASH,
                  state_root: Hash32 = BLANK_ROOT_HASH,
                  transaction_root: Hash32 = BLANK_ROOT_HASH,
                  receipt_root: Hash32 = BLANK_ROOT_HASH,
@@ -121,7 +132,7 @@ class LynxBlockHeader(rlp.Serializable, BlockHeaderAPI):
                 raise ValueError("Must set timestamp explicitly if this is not a genesis header")
         super().__init__(
             parent_hash=parent_hash,
-            uncles_hash=uncles_hash,
+            # uncles_hash=uncles_hash,
             coinbase=coinbase,
             state_root=state_root,
             transaction_root=transaction_root,
@@ -198,10 +209,89 @@ class LynxBackwardsHeader(BlockHeaderSedesAPI):
         #         f"Got {num_fields} in {encoded!r}"
         #     )
 
-class LynxBlock(GrayGlacierBlock):
-    transaction_builder: Type[TransactionBuilderAPI] = LynxTransactionBuilder
+class LynxBlock(BaseBlock):
+    transaction_builder = LynxTransactionBuilder
+    receipt_builder: Type[ReceiptBuilderAPI] = LondonReceiptBuilder
     fields = [
-        ('header', LynxBlockHeader),
+        ('header', BlockHeader),
         ('transactions', CountableList(transaction_builder)),
-        # ('uncles', CountableList(LynxBackwardsHeader)),
+        # ('uncles', CountableList(BlockHeader))
     ]
+
+    bloom_filter = None
+
+    def __init__(self,
+                 header: BlockHeaderAPI,
+                 transactions: Sequence[SignedTransactionAPI] = None,
+                #  uncles: Sequence[BlockHeaderAPI] = None
+                 ) -> None:
+        if transactions is None:
+            transactions = []
+        # if uncles is None:
+        #     uncles = []
+
+        self.bloom_filter = BloomFilter(header.bloom)
+
+        super().__init__(
+            header=header,
+            transactions=transactions,
+            # uncles=uncles,
+        )
+        # TODO: should perform block validation at this point?
+
+    #
+    # Helpers
+    #
+    @property
+    def number(self) -> BlockNumber:
+        return self.header.block_number
+
+    @property
+    def hash(self) -> Hash32:
+        return self.header.hash
+
+    #
+    # Transaction class for this block class
+    #
+    @classmethod
+    def get_transaction_builder(cls) -> Type[TransactionBuilderAPI]:
+        return cls.transaction_builder
+
+    @classmethod
+    def get_receipt_builder(cls) -> Type[ReceiptBuilderAPI]:
+        return cls.receipt_builder
+
+    #
+    # Receipts API
+    #
+    def get_receipts(self, chaindb: ChainDatabaseAPI) -> Tuple[ReceiptAPI, ...]:
+        return chaindb.get_receipts(self.header, self.get_receipt_builder())
+
+    #
+    # Header API
+    #
+    @classmethod
+    def from_header(cls, header: BlockHeaderAPI, chaindb: ChainDatabaseAPI) -> "LynxBlock":
+        """
+        Returns the block denoted by the given block header.
+
+        :raise eth.exceptions.BlockNotFound: if transactions or uncle headers are missing
+        """
+        # if header.uncles_hash == EMPTY_UNCLE_HASH:
+        #     uncles: Tuple[BlockHeaderAPI, ...] = ()
+        # else:
+        #     try:
+        #         uncles = chaindb.get_block_uncles(header.uncles_hash)
+        #     except HeaderNotFound as exc:
+        #         raise BlockNotFound(f"Uncles not found in database for {header}: {exc}") from exc
+
+        try:
+            transactions = chaindb.get_block_transactions(header, cls.get_transaction_builder())
+        except MissingTrieNode as exc:
+            raise BlockNotFound(f"Transactions not found in database for {header}: {exc}") from exc
+
+        return cls(
+            header=header,
+            transactions=transactions,
+            # uncles=uncles,
+        )
