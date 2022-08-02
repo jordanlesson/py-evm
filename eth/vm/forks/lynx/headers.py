@@ -109,7 +109,7 @@ def fill_header_params_from_parent(
         state_root: bytes = None,
         mix_hash: bytes = None,
         receipt_root: bytes = None,
-        # epoch: int = 0,
+        epoch: int = 0,
         ) -> Dict[str, HeaderParams]:
 
         # block_number: BlockNumber,
@@ -135,6 +135,7 @@ def fill_header_params_from_parent(
     if parent is None:
         parent_hash = GENESIS_PARENT_HASH
         block_number = GENESIS_BLOCK_NUMBER
+        epoch = epoch
         if state_root is None:
             state_root = BLANK_ROOT_HASH
     else:

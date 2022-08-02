@@ -11,7 +11,7 @@ SENDER_PRIVATE_KEY = keys.PrivateKey(bytes.fromhex('45a915e4d060149eb4365960e6a7
 SENDER_ADDRESS = Address(SENDER_PRIVATE_KEY.public_key.to_canonical_address())
 RECEIVER = Address(b'\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\x02')
 
-GENESIS_PARAMS = {'gas_limit': 3141592, 'timestamp': 1514764800,}
+GENESIS_PARAMS = {'gas_limit': 3141592, 'timestamp': 1514764800}
 
 GENESIS_STATE = {
     SENDER_ADDRESS : {
@@ -33,28 +33,29 @@ def test_blockchain():
     disable_pow_check(blockchain)
 
     genesis = blockchain.get_canonical_block_by_number(GENESIS_BLOCK_NUMBER)
+    print(genesis.header.as_dict())
 
-    tx = blockchain.create_unsigned_transaction(
-            nonce=0,
-            gas_price=0,
-            gas=100000,
-            to=RECEIVER,
-            value=20,
-            data=b'Aliens are real!',
-        )
+    # tx = blockchain.create_unsigned_transaction(
+    #         nonce=0,
+    #         gas_price=0,
+    #         gas=100000,
+    #         to=RECEIVER,
+    #         value=20,
+    #         data=b'Aliens are real!',
+    #     )
 
-    signed_tx = tx.as_signed_transaction(private_key=SENDER_PRIVATE_KEY)
+    # signed_tx = tx.as_signed_transaction(private_key=SENDER_PRIVATE_KEY)
 
-    blockchain.apply_transaction(signed_tx)
+    # blockchain.apply_transaction(signed_tx)
 
-    blockchain.set_header_timestamp(genesis.header.timestamp + 1)
+    # blockchain.set_header_timestamp(genesis.header.timestamp + 1)
 
-    block_result = blockchain.get_vm().finalize_block(blockchain.get_block())
-    block = block_result.block
+    # block_result = blockchain.get_vm().finalize_block(blockchain.get_block())
+    # block = block_result.block
 
-    blockchain.persist_block(block, perform_validation=True)
+    # blockchain.persist_block(block, perform_validation=True)
 
-    print(blockchain.get_canonical_head().as_dict())
+    # print(blockchain.get_canonical_head().as_dict())
 
 if __name__ == '__main__':
     test_blockchain()
