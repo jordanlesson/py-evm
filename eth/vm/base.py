@@ -174,7 +174,7 @@ class VM(Configurable, VirtualMachineAPI):
                                  chain_context: ChainContextAPI) -> ExecutionContextAPI:
         fee_recipient = cls.consensus_class.get_fee_recipient(header)
         try:
-            base_fee = header.base_fee_per_gas
+            base_fee = 0
         except AttributeError:
             return ExecutionContext(
                 coinbase=fee_recipient,
