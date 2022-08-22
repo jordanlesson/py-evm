@@ -81,7 +81,7 @@ class BlockHeader(rlp.Serializable, BlockHeaderAPI):
         ('timestamp', big_endian_int),
         ('extra_data', binary),
         ('mix_hash', binary),
-        ('nonce', Binary(8, allow_empty=True))
+        ('nonce', Binary(8, allow_empty=True)),
     ]
 
     @overload

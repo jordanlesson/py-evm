@@ -3,7 +3,7 @@ from typing import (
 )
 
 from eth.rlp.blocks import BaseBlock
-from eth.vm.forks import (
+from eth.vm.forks.muir_glacier import (
     MuirGlacierVM,
 )
 from eth.vm.state import BaseState

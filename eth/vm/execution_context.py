@@ -22,8 +22,8 @@ class ExecutionContext(ExecutionContextAPI):
     _prev_hashes = None
     _chain_id = None
     _base_fee_per_gas = None
-    _epoch = None
-    _slot = None
+    # _epoch = None
+    # _slot = None
 
     def __init__(
             self,
@@ -32,8 +32,8 @@ class ExecutionContext(ExecutionContextAPI):
             block_number: BlockNumber,
             prev_hashes: Iterable[Hash32],
             chain_id: int,
-            epoch: int,
-            slot: int,
+            # epoch: int,
+            # slot: int,
             difficulty: int = 0,
             gas_limit: int = 0,
             base_fee_per_gas: Optional[int] = 0,
@@ -46,8 +46,8 @@ class ExecutionContext(ExecutionContextAPI):
         self._prev_hashes = CachedIterable(prev_hashes)
         self._chain_id = chain_id
         self._base_fee_per_gas = base_fee_per_gas
-        self._epoch = epoch
-        self._slot = slot
+        # self._epoch = epoch
+        # self._slot = slot
 
     @property
     def coinbase(self) -> Address:
@@ -89,10 +89,10 @@ class ExecutionContext(ExecutionContextAPI):
         else:
             return self._base_fee_per_gas
 
-    @property
-    def epoch(self) -> int:
-        return self._epoch
+    # @property
+    # def epoch(self) -> int:
+    #     return self._epoch
 
-    @property
-    def slot(self) -> int:
-        return self._slot
+    # @property
+    # def slot(self) -> int:
+    #     return self._slot

@@ -45,13 +45,6 @@ from eth.abc import (
     BlockHeaderSedesAPI,
 )
 from eth.rlp.headers import BlockHeader
-
-from eth.vm.forks.london.constants import (
-    ELASTICITY_MULTIPLIER
-)
-from eth.vm.forks.london.headers import (
-    calculate_expected_base_fee_per_gas
-)
 from .blocks import LynxBlock, LynxBlockHeader
 
 @curry

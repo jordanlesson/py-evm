@@ -12,7 +12,7 @@ from .headers import (
     create_arrow_glacier_header_from_parent,
 )
 from .state import ArrowGlacierState
-from .. import LondonVM
+from eth.vm.forks.london import LondonVM
 
 
 class ArrowGlacierVM(LondonVM):

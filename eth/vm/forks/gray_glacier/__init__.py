@@ -12,7 +12,7 @@ from .headers import (
     create_gray_glacier_header_from_parent,
 )
 from .state import GrayGlacierState
-from .. import ArrowGlacierVM
+from eth.vm.forks.arrow_glacier import ArrowGlacierVM
 
 
 class GrayGlacierVM(ArrowGlacierVM):

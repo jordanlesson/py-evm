@@ -5,7 +5,9 @@ from eth.abc import (
     StateAPI,
 )
 
-from ..tangerine_whistle import TangerineWhistleVM
+from eth.vm.forks.tangerine_whistle import (
+    TangerineWhistleVM,
+)
 
 from .blocks import SpuriousDragonBlock
 from .state import SpuriousDragonState

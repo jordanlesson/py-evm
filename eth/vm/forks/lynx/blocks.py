@@ -53,10 +53,6 @@ from eth.rlp.sedes import (
 from eth.rlp.headers import (
     BlockHeader,
 )
-from eth.vm.forks.gray_glacier.blocks import (
-    GrayGlacierBlock
-)
-from eth.vm.forks.berlin.blocks import BerlinBlock
 from eth_typing import (
     BlockNumber,
 )
@@ -72,8 +68,6 @@ from eth.constants import (
     GENESIS_PARENT_HASH,
     BLANK_ROOT_HASH,
 )
-
-from eth.vm.forks.london.blocks import LondonBackwardsHeader
 
 from .transactions import LynxTransactionBuilder
 
@@ -91,6 +85,7 @@ UNMINED_LYNX_HEADER_FIELDS = [
     ('timestamp', big_endian_int),
     ('extra_data', binary),
     ('epoch', uint256),
+    ('slot', uint256),
     # ('base_fee_per_gas', big_endian_int),
 ]
 
@@ -120,9 +115,9 @@ class LynxBlockHeader(rlp.Serializable, BlockHeaderAPI):
                 #  nonce: bytes = GENESIS_NONCE,
                 #  mix_hash: Hash32 = ZERO_HASH32,
                 #  base_fee_per_gas: int = 0,
-                #  slot: int = 0,
                 #  slot_leader : Address = ZERO_ADDRESS,
-                 epoch : int = 1
+                 epoch : int = 1,
+                 slot : int = 1,
                  ) -> None:
         if timestamp is None:
             if parent_hash == ZERO_HASH32:
@@ -146,6 +141,7 @@ class LynxBlockHeader(rlp.Serializable, BlockHeaderAPI):
             # mix_hash=mix_hash,
             # nonce=nonce,
             epoch=epoch,
+            slot=slot,
             # base_fee_per_gas=base_fee_per_gas,
         )
         # self.slot : int = slot
@@ -183,6 +179,14 @@ class LynxBlockHeader(rlp.Serializable, BlockHeaderAPI):
     @property
     def base_fee_per_gas(self) -> int:
         raise AttributeError("Base fee per gas not available until London fork")
+
+    @property
+    def epoch(self) -> int:
+        return self.epoch
+
+    @property
+    def slot(self) -> int:
+        return self.slot
     
     
 class LynxBackwardsHeader(BlockHeaderSedesAPI):

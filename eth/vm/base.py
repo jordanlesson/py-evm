@@ -169,7 +169,7 @@ class VM(Configurable, VirtualMachineAPI):
 
     @classmethod
     def create_execution_context(cls,
-                                 header: BlockHeaderAPI,
+                                 header: BlockHeader,
                                  prev_hashes: Iterable[Hash32],
                                  chain_context: ChainContextAPI) -> ExecutionContextAPI:
         fee_recipient = cls.consensus_class.get_fee_recipient(header)
@@ -186,6 +186,7 @@ class VM(Configurable, VirtualMachineAPI):
                 chain_id=chain_context.chain_id,
             )
         else:
+            
             return ExecutionContext(
                 coinbase=fee_recipient,
                 timestamp=header.timestamp,
@@ -195,7 +196,7 @@ class VM(Configurable, VirtualMachineAPI):
                 prev_hashes=prev_hashes,
                 chain_id=chain_context.chain_id,
                 # base_fee_per_gas=base_fee,
-            )
+            )    
 
     def execute_bytecode(self,
                          origin: Address,
