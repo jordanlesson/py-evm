@@ -1,9 +1,9 @@
-from eth.vm.forks.gray_glacier.computation import GrayGlacierComputation
+from eth.vm.forks.frontier.computation import FrontierComputation
 
 
-class LynxComputation(GrayGlacierComputation):
+class LynxComputation(FrontierComputation):
     """
     A class for all execution computations in the ``Lynx`` fork.
-    Inherits from :class:`~eth.vm.forks.gray_glacier.GrayGlacierComputation`.
+    Inherits from :class:`~eth.vm.forks.frontier.FrontierComputation`.
     """
     pass

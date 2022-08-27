@@ -408,7 +408,7 @@ class HeaderDB(HeaderDatabaseAPI):
         except CanonicalHeadNotFound:
             return cls._set_as_canonical_chain_head(db, curr_chain_head, genesis_parent_hash)
 
-        if score > head_score:
+        if score >= head_score:
             return cls._set_as_canonical_chain_head(db, curr_chain_head, genesis_parent_hash)
 
         return (), ()

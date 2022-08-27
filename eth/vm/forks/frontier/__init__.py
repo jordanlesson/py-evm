@@ -123,6 +123,4 @@ class FrontierVM(VM):
 
         receipt_without_state_root = make_frontier_receipt(computation, gas_used)
 
-        return receipt_without_state_root.copy(
-            state_root=state.make_state_root()
-        )
+        return receipt_without_state_root.copy(state_root=state.make_state_root())

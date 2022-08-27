@@ -68,56 +68,49 @@ from eth.constants import (
     GENESIS_PARENT_HASH,
     BLANK_ROOT_HASH,
 )
-
-from .transactions import LynxTransactionBuilder
-
-UNMINED_LYNX_HEADER_FIELDS = [
-    ('parent_hash', hash32),
-    # ('uncles_hash', hash32),
-    ('coinbase', address),
-    ('state_root', trie_root),
-    ('transaction_root', trie_root),
-    ('receipt_root', trie_root),
-    ('bloom', uint256),
-    ('block_number', big_endian_int),
-    # ('gas_limit', big_endian_int),
-    ('gas_used', big_endian_int),
-    ('timestamp', big_endian_int),
-    ('extra_data', binary),
-    ('epoch', uint256),
-    ('slot', uint256),
-    # ('base_fee_per_gas', big_endian_int),
-]
-
-class LynxMiningHeader(rlp.Serializable, MiningHeaderAPI):
-    fields = UNMINED_LYNX_HEADER_FIELDS
+from eth.rlp.receipts import (
+    Receipt,
+)
+from .transactions import LynxTransaction
+from eth_utils import (
+    humanize_hash,
+)
 
 
 class LynxBlockHeader(rlp.Serializable, BlockHeaderAPI):
-    fields = UNMINED_LYNX_HEADER_FIELDS[:-1] + [
-        # ('mix_hash', binary),
-        # ('nonce', Binary(8, allow_empty=True)),
-    ] + UNMINED_LYNX_HEADER_FIELDS[-1:]
+    fields = [('parent_hash', hash32),
+        ('coinbase', address),
+        ('state_root', trie_root),
+        ('transaction_root', trie_root),
+        ('receipt_root', trie_root),
+        ('bloom', uint256),
+        ('block_number', big_endian_int),
+        ('gas_used', big_endian_int),
+        ('timestamp', big_endian_int),
+        ('extra_data', binary),
+        ('epoch', big_endian_int),
+        ('slot', big_endian_int),
+        ('epoch_block_number', big_endian_int),
+        ('slot_size', big_endian_int),
+        ('epoch_size', big_endian_int)]
+    
 
     def __init__(self,
                  block_number: BlockNumber,
-                #  gas_limit: int,
                  timestamp: int = None,
                  coinbase: Address = ZERO_ADDRESS,
                  parent_hash: Hash32 = ZERO_HASH32,
-                #  uncles_hash: Hash32 = EMPTY_UNCLE_HASH,
                  state_root: Hash32 = BLANK_ROOT_HASH,
                  transaction_root: Hash32 = BLANK_ROOT_HASH,
                  receipt_root: Hash32 = BLANK_ROOT_HASH,
+                 epoch : int = 0,
+                 slot : int = 0,
+                 epoch_block_number : int = 0,
+                 slot_size : int = 10,
+                 epoch_size : int = 10,
                  bloom: int = 0,
                  gas_used: int = 0,
                  extra_data: bytes = b'',
-                #  nonce: bytes = GENESIS_NONCE,
-                #  mix_hash: Hash32 = ZERO_HASH32,
-                #  base_fee_per_gas: int = 0,
-                #  slot_leader : Address = ZERO_ADDRESS,
-                 epoch : int = 1,
-                 slot : int = 1,
                  ) -> None:
         if timestamp is None:
             if parent_hash == ZERO_HASH32:
@@ -127,43 +120,36 @@ class LynxBlockHeader(rlp.Serializable, BlockHeaderAPI):
                 raise ValueError("Must set timestamp explicitly if this is not a genesis header")
         super().__init__(
             parent_hash=parent_hash,
-            # uncles_hash=uncles_hash,
             coinbase=coinbase,
             state_root=state_root,
             transaction_root=transaction_root,
             receipt_root=receipt_root,
             bloom=bloom,
             block_number=block_number,
-            # gas_limit=gas_limit,
             gas_used=gas_used,
             timestamp=timestamp,
-            extra_data=extra_data,
-            # mix_hash=mix_hash,
-            # nonce=nonce,
             epoch=epoch,
+            extra_data=extra_data,
             slot=slot,
-            # base_fee_per_gas=base_fee_per_gas,
+            epoch_block_number=epoch_block_number,
+            slot_size=slot_size,
+            epoch_size=epoch_size,
         )
-        # self.slot : int = slot
-        # self.slot_leader : Address = slot_leader
-        
 
     def __str__(self) -> str:
         return f'<LynxBlockHeader #{self.block_number} {self.hash.hex()[2:10]}>'
     
-    _hash = None 
+    _hash = None
+
+    @property
+    def mining_hash(self) -> Hash32:
+        return ZERO_HASH32
 
     @property
     def hash(self) -> Hash32:
         if self._hash is None:
             self._hash = keccak(rlp.encode(self))
         return cast(Hash32, self._hash)
-
-    @property
-    def mining_hash(self) -> Hash32:
-        non_pow_fields = self[:-3] + self[-1:]
-        result = keccak(rlp.encode(non_pow_fields, LynxMiningHeader))
-        return cast(Hash32, result)
 
     @property
     def hex_hash(self) -> str:
@@ -179,14 +165,6 @@ class LynxBlockHeader(rlp.Serializable, BlockHeaderAPI):
     @property
     def base_fee_per_gas(self) -> int:
         raise AttributeError("Base fee per gas not available until London fork")
-
-    @property
-    def epoch(self) -> int:
-        return self.epoch
-
-    @property
-    def slot(self) -> int:
-        return self.slot
     
     
 class LynxBackwardsHeader(BlockHeaderSedesAPI):
@@ -202,44 +180,28 @@ class LynxBackwardsHeader(BlockHeaderSedesAPI):
 
     @classmethod
     def deserialize(cls, encoded: List[bytes]) -> LynxBlockHeader:
-        num_fields = len(encoded)
-        # if num_fields == 16:
         return LynxBlockHeader.deserialize(encoded)
-        # elif num_fields == 15:
-        #     return BlockHeader.deserialize(encoded)
-        # else:
-        #     raise ValueError(
-        #         "Lynx & earlier can only handle headers of 15 or 16 fields. "
-        #         f"Got {num_fields} in {encoded!r}"
-        #     )
+
 
 class LynxBlock(BaseBlock):
-    transaction_builder = LynxTransactionBuilder
+    transaction_builder = LynxTransaction
     receipt_builder: Type[ReceiptBuilderAPI] = LondonReceiptBuilder
     fields = [
-        ('header', BlockHeader),
+        ('header', LynxBlockHeader),
         ('transactions', CountableList(transaction_builder)),
-        # ('uncles', CountableList(BlockHeader))
     ]
 
     bloom_filter = None
 
-    def __init__(self,
-                 header: BlockHeaderAPI,
-                 transactions: Sequence[SignedTransactionAPI] = None,
-                #  uncles: Sequence[BlockHeaderAPI] = None
-                 ) -> None:
+    def __init__(self, header: BlockHeaderAPI, transactions: Sequence[SignedTransactionAPI] = None) -> None:
         if transactions is None:
             transactions = []
-        # if uncles is None:
-        #     uncles = []
 
         self.bloom_filter = BloomFilter(header.bloom)
 
         super().__init__(
             header=header,
             transactions=transactions,
-            # uncles=uncles,
         )
         # TODO: should perform block validation at this point?
 
@@ -281,13 +243,6 @@ class LynxBlock(BaseBlock):
 
         :raise eth.exceptions.BlockNotFound: if transactions or uncle headers are missing
         """
-        # if header.uncles_hash == EMPTY_UNCLE_HASH:
-        #     uncles: Tuple[BlockHeaderAPI, ...] = ()
-        # else:
-        #     try:
-        #         uncles = chaindb.get_block_uncles(header.uncles_hash)
-        #     except HeaderNotFound as exc:
-        #         raise BlockNotFound(f"Uncles not found in database for {header}: {exc}") from exc
 
         try:
             transactions = chaindb.get_block_transactions(header, cls.get_transaction_builder())
@@ -297,5 +252,4 @@ class LynxBlock(BaseBlock):
         return cls(
             header=header,
             transactions=transactions,
-            # uncles=uncles,
         )

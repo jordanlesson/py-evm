@@ -1,4 +1,5 @@
 from eth.vm.forks.lynx.blocks import LynxBackwardsHeader
+from eth.vm.forks.london.blocks import LondonBackwardsHeader
 
 HeaderSedes = LynxBackwardsHeader
 """
