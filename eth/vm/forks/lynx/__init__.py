@@ -144,6 +144,42 @@ class LynxVM(VM):
         return packed_block
 
     # Validation
+    def import_block(self, block: BlockAPI) -> BlockAndMetaWitness:
+        if self.get_block().number != block.number:
+            raise ValidationError(
+                f"This VM can only import blocks at number #{self.get_block().number},"
+                f" the attempted block was #{block.number}"
+            )
+
+        self._block = self.get_block().copy(
+            header=self.configure_header(
+                coinbase=block.header.coinbase,
+                timestamp=block.header.timestamp,
+                extra_data=block.header.extra_data,
+            ),
+        )
+
+        execution_context = self.create_execution_context(
+            block.header, self.previous_hashes, self.chain_context)
+
+        # Zero out the gas_used before applying transactions. Each applied transaction will
+        #   increase the gas used in the final new_header.
+        header = self.get_header().copy(gas_used=0)
+        # we need to re-initialize the `state` to update the execution context.
+        self._state = self.get_state_class()(self.chaindb.db, execution_context, header.state_root)
+
+        # run all of the transactions.
+        new_header, receipts, _ = self.apply_all_transactions(block.transactions, header)
+
+        block_with_transactions = self.set_block_transactions(
+            self.get_block(),
+            new_header,
+            block.transactions,
+            receipts,
+        )
+
+        return self.forge_block(block_with_transactions)
+
     def validate_block(self, block: BlockAPI) -> None:
         if not isinstance(block, self.get_block_class()):
             raise ValidationError(
